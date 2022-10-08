@@ -8,9 +8,6 @@ form.addEventListener('submit', event => {
 });
 
 $('#display').on('change', convert);
-$('.close ').click(function() {
-    $('#mobile-notice').hide();
-});
 
 function convert() {
     //  Get the number input
