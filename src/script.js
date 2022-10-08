@@ -1,7 +1,4 @@
-import jQuery from "jquery";
-const $ = jQuery.noConflict();
-
-$(document).ready(function () {
+$(document).ready(function() {
   var form = document.getElementById("form");
   function handleForm(event) {
     event.preventDefault();
@@ -10,7 +7,7 @@ $(document).ready(function () {
   form.addEventListener("submit", handleForm);
 
   $("#display").on("change", convert);
-  $(".close ").click(function () {
+  $(".close ").click(function() {
     $("#mobile-notice").hide();
   });
 
@@ -26,16 +23,15 @@ $(document).ready(function () {
     // Checkboxes
 
     let gammaFuncCheckBox = document.getElementById("gamma-function").checked;
-    let eulersIdentityCheckBox =
-      document.getElementById("eulers-identity").checked;
-    let limitExponentialCheckBox =
-      document.getElementById("limits-exponential").checked;
-    let limitPolynomialCheckBox =
-      document.getElementById("limits-polynomial").checked;
-    let trigCheckBox =
-      document.getElementById("trig").checked;
-    let geometricSeriesCheckBox =
-      document.getElementById("geometric-series").checked;
+    let eulersIdentityCheckBox = document.getElementById("eulers-identity")
+      .checked;
+    let limitExponentialCheckBox = document.getElementById("limits-exponential")
+      .checked;
+    let limitPolynomialCheckBox = document.getElementById("limits-polynomial")
+      .checked;
+    let trigCheckBox = document.getElementById("trig").checked;
+    let geometricSeriesCheckBox = document.getElementById("geometric-series")
+      .checked;
 
     /* helper functions */
     function isOdd(n) {
@@ -58,7 +54,7 @@ $(document).ready(function () {
     }
 
     function getFactors(n) {
-      return [...Array(n + 1).keys()].filter((i) => n % i === 0);
+      return [...Array(n + 1).keys()].filter(i => n % i === 0);
     }
 
     // Checking if a number can be formed using factorial
@@ -133,13 +129,11 @@ $(document).ready(function () {
       }
       let r = Math.floor(Math.random() * 10) + 1;
       if (Math.random() < 0.5) {
-        var tex = `{\\lim_{x \\to ${n - r}} {{x^2 - ${
-          r ** 2
-        }} \\over {x - ${r}}}}`.trim();
+        var tex = `{\\lim_{x \\to ${n - r}} {{x^2 - ${r **
+          2}} \\over {x - ${r}}}}`.trim();
       } else {
-        var tex = `{\\lim_{x \\to ${n + r}} {{x^2 - ${
-          r ** 2
-        }} \\over {x + ${r}}}}`.trim();
+        var tex = `{\\lim_{x \\to ${n + r}} {{x^2 - ${r **
+          2}} \\over {x + ${r}}}}`.trim();
       }
       return tex;
     }
@@ -254,9 +248,8 @@ $(document).ready(function () {
       // https://en.wikipedia.org/wiki/List_of_mathematical_series#Trigonometric_functions
       if (n === 0) {
         let r = Math.floor(Math.random() * 10) + 3;
-        return `{\\sum\\limits_{k=0}^{${
-          r - 1
-        }} {\\sin \\left({ {2 \\pi k} \\over {${r}} } \\right)}}`;
+        return `{\\sum\\limits_{k=0}^{${r -
+          1}} {\\sin \\left({ {2 \\pi k} \\over {${r}} } \\right)}}`;
       }
 
       // Using the Riemann zeta function: https://en.wikipedia.org/wiki/Particular_values_of_the_Riemann_zeta_function#The_Riemann_zeta_function_at_0_and_1
@@ -265,9 +258,8 @@ $(document).ready(function () {
       } else {
         // Using the infinite geometric series rule: When −1<x<1, summation from i = 0 to infinity of r^i = 1/(1-r) or (r-1)/r.
         // Decimal can be represented as fraction too. e.g (0.25)^i = (1/4)^i = 4^-i
-        return `{\\sum\\limits_{k=0}^\\infty {\\left({${
-          n - 1
-        } \\over {${n}}}\\right)^{k}}}`;
+        return `{\\sum\\limits_{k=0}^\\infty {\\left({${n -
+          1} \\over {${n}}}\\right)^{k}}}`;
       }
     }
 
@@ -290,7 +282,7 @@ $(document).ready(function () {
       randOption = options_for_trig[randIndex];
 
       if (options_for_trig.length < 1) {
-        randOption = same_number
+        randOption = same_number;
       }
       if (n > 0) {
         let randomValue = Math.random();
@@ -472,7 +464,7 @@ $(document).ready(function () {
       }
 
       // n = (d + 1)^2 - d^2 = 2d + 1 , where d = Math.floor(n/2)
-      if (n > 2 && isOdd(n) && randomValue < 0.40) {
+      if (n > 2 && isOdd(n) && randomValue < 0.4) {
         let d = Math.floor(n / 2);
         if (Math.random() < 0.5) {
           return `{${randomOption1(2)} \\left({${randomOption2(
@@ -567,7 +559,7 @@ $(document).ready(function () {
       }
 
       // Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
-      else if (randomValue < 0.90) {
+      else if (randomValue < 0.9) {
         let randNum = Math.floor(Math.random() * n + 1) + 1;
         let r = n % randNum;
         let a = Math.floor(n / randNum);
@@ -603,7 +595,7 @@ $(document).ready(function () {
     var options = MathJax.getMetricsFor(output);
     options.display = display.checked;
     MathJax.tex2svgPromise(input, options)
-      .then(function (node) {
+      .then(function(node) {
         //  The promise returns the typeset node, which we add to the output
         //  Then update the document to include the adjusted CSS for the
         //    content of the new equation.
@@ -613,13 +605,13 @@ $(document).ready(function () {
         // Display download button
         downloadBtn.style.display = "block";
       })
-      .catch(function (err) {
+      .catch(function(err) {
         //  If there was an error, put the message into the output instead
         output
           .appendChild(document.createElement("pre"))
           .appendChild(document.createTextNode(err.message));
       })
-      .then(function () {
+      .then(function() {
         //  Error or not, re-enable the display and render buttons
         button.disabled = display.disabled = false;
       });
