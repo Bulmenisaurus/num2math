@@ -73,7 +73,7 @@ const factorial = (n: number, gammaFunctionEnabled: boolean) => {
 };
 
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
-const limit_natural_log = (n: number) => {
+const limitNaturalLog = (n: number) => {
     if (n === 0) {
         return `{\\lim_{x \\to \\infty}{ \\ln(x) \\over {x} }}`;
     } else if (n === 1) {
@@ -84,7 +84,7 @@ const limit_natural_log = (n: number) => {
 };
 
 // Limits of exponential functions: https://en.wikipedia.org/wiki/List_of_limits#Sums,_products_and_composites
-function limit_exponential(n: number) {
+const limitExponential = (n: number) => {
     if (n === 0) {
         return `{\\lim_{x \\to \\infty}{xe^{-x}}}`;
     } else if (n === 1) {
@@ -92,10 +92,10 @@ function limit_exponential(n: number) {
     } else {
         return `{\\lim_{x \\to 0}{ {e^{${n}x} - 1} \\over {x} }}`;
     }
-}
+};
 
 // Limits of polynomial functions
-const limit_polynomial = (n: number) => {
+const limitPolynomial = (n: number) => {
     // https://en.wikipedia.org/wiki/List_of_limits#Functions_of_the_form_xa
     if (n === 0) {
         let r = Math.floor(Math.random() * 20);
@@ -150,7 +150,7 @@ const limit_polynomial = (n: number) => {
 };
 
 // Using euler's identity. That is, e^(pi*i) = -1
-const eulers_identity = (n: number) => {
+const eulersIdentity = (n: number) => {
     // e.g −6e^(pi*i)=6
 
     if (n !== 0) {
@@ -161,7 +161,7 @@ const eulers_identity = (n: number) => {
 };
 
 // Infinite geometric series that evaluates to a finite value
-const infinite_geometric_series = (n: number) => {
+const infiniteGeometricSeries = (n: number) => {
     // https://en.wikipedia.org/wiki/List_of_mathematical_series#Trigonometric_functions
     if (n === 0) {
         let r = Math.floor(Math.random() * 10) + 3;
@@ -180,7 +180,7 @@ const infinite_geometric_series = (n: number) => {
 };
 
 // Using the trig identity (cos^2)x + (sin^2)x = 1
-const trig_identity = (expression: string) => {
+const trigIdentity = (expression: string) => {
     let randomValue = Math.random();
     if (randomValue < 0.25) {
         return `\\left({${expression} \\over {(\\cos^2x + \\sin^2x)}}\\right)`;
@@ -190,7 +190,7 @@ const trig_identity = (expression: string) => {
 };
 
 /* Using the difference of two squares in limits */
-const lim_diff_two_squares = (n: number) => {
+const limDiffTwoSquares = (n: number) => {
     let r = Math.floor(Math.random() * 10) + 1;
     if (Math.random() < 0.5) {
         var tex = `{\\lim_{x \\to ${n - r}} {{x^2 - ${r ** 2}} \\over {x - ${r}}}}`.trim();
@@ -200,12 +200,12 @@ const lim_diff_two_squares = (n: number) => {
     return tex;
 };
 
-const same_number = (n: number) => `${n}`;
+const sameNumber = (n: number) => `${n}`;
 
 /* end representations of numbers */
 
 // Another function to break numbers down into smaller numbers, expressed using exponent
-function decompose2(n: number, option1: (n: number) => string, option2: (n: number) => string) {
+const decompose2 = (n: number, option1: (n: number) => string, option2: (n: number) => string) => {
     // n -> (a)^b ± x
     let base = Math.floor(Math.random() * 3) + 6;
 
@@ -233,10 +233,10 @@ function decompose2(n: number, option1: (n: number) => string, option2: (n: numb
 
         return `{ \\left({${option1(base)}}\\right) ${power} - {${option2(diffCeil)}}}`;
     }
-}
+};
 
 // Break a number down into smaller numbers separated by operators
-function decompose(n: number, operations: ((n: number) => string)[]) {
+const decompose = (n: number, operations: ((n: number) => string)[]) => {
     // Get three operations that can be used
     let moreRandomOptions = (num: number) => {
         return operations[Math.floor(Math.random() * operations.length)](num);
@@ -248,10 +248,10 @@ function decompose(n: number, operations: ((n: number) => string)[]) {
 
     // if there are no operations to be done
     if (operations.length === 0) {
-        randomOption1 = same_number;
-        randomOption2 = same_number;
-        randomOption3 = same_number;
-        moreRandomOptions = same_number;
+        randomOption1 = sameNumber;
+        randomOption2 = sameNumber;
+        randomOption3 = sameNumber;
+        moreRandomOptions = sameNumber;
     }
 
     if (operations.length >= 3) {
@@ -307,12 +307,12 @@ function decompose(n: number, operations: ((n: number) => string)[]) {
 
     // The sum of the first n odd numbers is equal to n^2 e.g 1 + 3 + 5 = 3^2
     else if (n > 1 && isSquare(n) && randomValue < 0.6) {
-        let squareroot = Math.sqrt(n);
+        let squareRoot = Math.sqrt(n);
         let sum = `${randomOption1(1)}`;
         let oddVal = 1;
 
         if (Math.random() < 0.2) {
-            for (let i = 0; i < squareroot - 1; i++) {
+            for (let i = 0; i < squareRoot - 1; i++) {
                 let randIndex = Math.floor(Math.random() * operations.length);
                 let randomOption = operations[randIndex];
                 oddVal += 2;
@@ -324,8 +324,8 @@ function decompose(n: number, operations: ((n: number) => string)[]) {
 
         // (a + b)^2 = a^2 + 2ab + b^2
         else {
-            let a = Math.floor(Math.random() * squareroot - 1) + 1;
-            let b = squareroot - a;
+            let a = Math.floor(Math.random() * squareRoot - 1) + 1;
+            let b = squareRoot - a;
 
             // Representing (a + b)^2
             if (Math.random() < 0.5) {
@@ -388,7 +388,7 @@ function decompose(n: number, operations: ((n: number) => string)[]) {
         let r = Math.floor(Math.random() * 5) + 1;
         return `${randomOption1(n * r)} \\over {${randomOption2(r)}}`;
     }
-}
+};
 
 type ConvertOptions = {
     gammaFunction: boolean;
@@ -405,35 +405,26 @@ const convert = (number: number, options: ConvertOptions) => {
         return;
     }
 
-    // Checkboxes
-
-    let gammaFuncCheckBox = options.gammaFunction;
-    let eulersIdentityCheckBox = options.eulersIdentity;
-    let limitExponentialCheckBox = options.exponentialLimits;
-    let limitPolynomialCheckBox = options.polynomialLimits;
-    let trigCheckBox = options.trigonometry;
-    let geometricSeriesCheckBox = options.geometricSeries;
-
     /* Need to add another slash to latex strings to prevent slash escape */
 
     // List of functions that generate LaTeX math expressions
     // Functions are chosen randomly
     let possible_options: ((n: number) => string)[] = [];
 
-    if (eulersIdentityCheckBox) {
-        possible_options.push(eulers_identity);
+    if (options.eulersIdentity) {
+        possible_options.push(eulersIdentity);
     }
-    if (limitExponentialCheckBox) {
-        possible_options.push(limit_natural_log);
-        possible_options.push(limit_exponential);
+    if (options.exponentialLimits) {
+        possible_options.push(limitNaturalLog);
+        possible_options.push(limitExponential);
     }
-    if (limitPolynomialCheckBox) {
-        possible_options.push(lim_diff_two_squares);
-        possible_options.push(limit_polynomial);
+    if (options.polynomialLimits) {
+        possible_options.push(limDiffTwoSquares);
+        possible_options.push(limitPolynomial);
     }
 
-    if (geometricSeriesCheckBox) {
-        possible_options.push(infinite_geometric_series);
+    if (options.geometricSeries) {
+        possible_options.push(infiniteGeometricSeries);
     }
 
     let input = decompose(number, possible_options);
