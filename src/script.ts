@@ -56,29 +56,29 @@ function convert() {
     }
 
     function getFactors(n: number) {
-        return [...Array(n + 1).keys()].filter(i => n % i === 0);
+        let factors = [];
+        for (let i = 0; i <= n; i++) {
+            if (n % i === 0) {
+                factors.push(i);
+            }
+        }
+        return factors;
     }
 
     // Checking if a number can be formed using factorial
     function isFactorial(n: number) {
-        switch (n) {
-            case 2:
-                return 2;
-                break;
-            case 6:
-                return 3;
-                break;
-            case 24:
-                return 4;
-                break;
-            case 120:
-                return 5;
-                break;
-            case 720:
-                return 6;
-                break;
-            default:
-                return false;
+        const factorials: { [key: number]: number } = {
+            2: 2,
+            6: 3,
+            24: 4,
+            120: 5,
+            720: 6,
+        };
+
+        if (n in factorials) {
+            return factorials[n];
+        } else {
+            return false;
         }
     }
 
@@ -302,7 +302,8 @@ function convert() {
         let randomOption2 = moreRandomOptions;
         let randomOption3 = moreRandomOptions;
 
-        if (possible_options.length < 1) {
+        // if there are no operations to be done
+        if (possible_options.length === 0) {
             randomOption1 = same_number;
             randomOption2 = same_number;
             randomOption3 = same_number;
