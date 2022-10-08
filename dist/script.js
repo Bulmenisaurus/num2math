@@ -63,13 +63,13 @@ const factorial = (n, gammaFunctionEnabled) => {
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
 const limitNaturalLog = (n) => {
     if (n === 0) {
-        return `{\\lim_{x \\to \\infty}{ \\ln(x) \\over {x} }}`;
+        return `{\\lim_{x \\to \\infty}{ \\frac{\\ln(x)}{x} }}`;
     }
     else if (n === 1) {
-        return `{\\lim_{x \\to 1}  { {\\ln(x)} \\over {x - 1} }}`;
+        return `{\\lim_{x \\to 1}  {\\frac{\\ln(x)}{x - 1}}}`;
     }
     else {
-        return `{\\lim_{x \\to 0}{ {-\\ln(1 + ${n}(e^{-x} - 1))} \\over {x} }}`;
+        return `{\\lim_{x \\to 0}{ \\frac{-\\ln(1 + ${n}(e^{-x} - 1))}{x} }}`;
     }
 };
 // Limits of exponential functions: https://en.wikipedia.org/wiki/List_of_limits#Sums,_products_and_composites
@@ -78,10 +78,10 @@ const limitExponential = (n) => {
         return `{\\lim_{x \\to \\infty}{xe^{-x}}}`;
     }
     else if (n === 1) {
-        return `{\\lim_{x \\to 0}{ {e^x - 1} \\over {x} }}`;
+        return `{\\lim_{x \\to 0}{ \\frac{e^x - 1}{x} }}`;
     }
     else {
-        return `{\\lim_{x \\to 0}{ {e^{${n}x} - 1} \\over {x} }}`;
+        return `{\\lim_{x \\to 0}{ \\frac{e^{${n}x} - 1}{x} }}`;
     }
 };
 // Limits of polynomial functions
@@ -122,10 +122,7 @@ const limitPolynomial = (n) => {
             let sign = signs[Math.floor(Math.random() * 2)];
             denominator += `${sign} ${coef}x${power} `;
         }
-        // Surround everything with curly braces so that they're treated as one
-        numerator = `{ ${numerator} }`;
-        denominator = `{ ${denominator} }`;
-        return `{\\lim_{x \\to \\infty}{${numerator} \\over {${denominator}}}}`;
+        return `{ \\lim_{x \\to \\infty} { \\frac{${numerator}}{${denominator}}} }`;
     }
 };
 // Using euler's identity. That is, e^(pi*i) = -1
@@ -144,7 +141,7 @@ const infiniteGeometricSeries = (n) => {
     if (n === 0) {
         let r = Math.floor(Math.random() * 10) + 3;
         return `{\\sum\\limits_{k=0}^{${r -
-            1}} {\\sin \\left({ {2 \\pi k} \\over {${r}} } \\right)}}`;
+            1}} {\\sin \\left({ \\frac{2 \\pi k}{${r}} } \\right)}}`;
     }
     // Using the Riemann zeta function: https://en.wikipedia.org/wiki/Particular_values_of_the_Riemann_zeta_function#The_Riemann_zeta_function_at_0_and_1
     else if (n === 1) {
@@ -153,14 +150,14 @@ const infiniteGeometricSeries = (n) => {
     else {
         // Using the infinite geometric series rule: When −1<x<1, summation from i = 0 to infinity of r^i = 1/(1-r) or (r-1)/r.
         // Decimal can be represented as fraction too. e.g (0.25)^i = (1/4)^i = 4^-i
-        return `{\\sum\\limits_{k=0}^\\infty {\\left({${n - 1} \\over {${n}}}\\right)^{k}}}`;
+        return `{\\sum\\limits_{k=0}^\\infty {\\left({\\frac{${n - 1}}{${n}}}\\right)^{k}}}`;
     }
 };
 // Using the trig identity (cos^2)x + (sin^2)x = 1
 const trigIdentity = (expression) => {
     let randomValue = Math.random();
     if (randomValue < 0.25) {
-        return `\\left({${expression} \\over {(\\cos^2x + \\sin^2x)}}\\right)`;
+        return `\\left(\\frac{${expression}}{(\\cos^2x + \\sin^2x)}\\right)`;
     }
     else if (randomValue < 0.5) {
         return `\\left({${expression} \\times (\\cos^2x + \\sin^2x)}\\right)`;
@@ -170,12 +167,12 @@ const trigIdentity = (expression) => {
 const limDiffTwoSquares = (n) => {
     let r = Math.floor(Math.random() * 10) + 1;
     if (Math.random() < 0.5) {
-        var tex = `{\\lim_{x \\to ${n - r}} {{x^2 - ${r ** 2}} \\over {x - ${r}}}}`.trim();
+        var tex = `\\lim_{x \\to ${n - r}} \\frac{x^2 - ${r ** 2}}{x - ${r}}`;
     }
     else {
-        var tex = `{\\lim_{x \\to ${n + r}} {{x^2 - ${r ** 2}} \\over {x + ${r}}}}`.trim();
+        var tex = `\\lim_{x \\to ${n + r}} \\frac{x^2 - ${r ** 2}}{x + ${r}}`;
     }
-    return tex;
+    return `{${tex}}`;
 };
 const sameNumber = (n) => `${n}`;
 /* end representations of numbers */
@@ -321,7 +318,7 @@ const decompose = (n, operations) => {
     }
     else {
         let r = Math.floor(Math.random() * 5) + 1;
-        return `${randomOption1(n * r)} \\over {${randomOption2(r)}}`;
+        return `\\frac{${randomOption1(n * r)}} {${randomOption2(r)}}`;
     }
 };
 const convert = (number, options) => {
