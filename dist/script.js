@@ -33,7 +33,7 @@ const getFactors = (n) => {
     return factors;
 };
 // Checking if a number can be formed using factorial
-function isFactorial(n) {
+const isFactorial = (n) => {
     const factorials = {
         2: 2,
         6: 3,
@@ -47,7 +47,8 @@ function isFactorial(n) {
     else {
         return false;
     }
-}
+};
+const isPow2 = (n) => n >= 2 && Number.isInteger(Math.log2(n));
 /* end helper functions */
 /* start representations of numbers */
 const factorial = (n, gammaFunctionEnabled) => {
@@ -59,6 +60,10 @@ const factorial = (n, gammaFunctionEnabled) => {
         // Using the pi product notation of factorial
         return `{\\prod_{k=1}^{${n}} k}`;
     }
+};
+// representation of 2^n
+const pow2Choose = (n) => {
+    return `{\\sum_{k=0}^{${n}} {n \\choose k}}`;
 };
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
 const limitNaturalLog = (n) => {
@@ -249,6 +254,22 @@ const decomposeMulDivide = (n, op1, op2) => {
     return `\\frac{${op1(n * r)}} {${op2(r)}}`;
 };
 /* end decompose functions */
+const conditionalDecomposition = (wrappedFunction, options) => {
+    return (n) => {
+        if (Math.random() <= 0.5) {
+            // inverse factorial of n, such that fac! = n
+            const fac = isFactorial(n);
+            if (fac) {
+                // factorial(fac) = fac! = n
+                return factorial(fac, options.gammaFunction);
+            }
+            if (isPow2(n)) {
+                return pow2Choose(Math.log2(n));
+            }
+        }
+        return wrappedFunction(n);
+    };
+};
 // Break a number down into smaller numbers separated by operators
 const decompose = (n, operations) => {
     // Get three operations that can be used
@@ -317,6 +338,10 @@ const convert = (number, options) => {
     if (options.geometricSeries) {
         possible_options.push(infiniteGeometricSeries);
     }
+    // decorate each operation with a function that checks if the input is of a certain form, and if it is it overrides the decorated function's usual result with it's own.
+    possible_options = possible_options.map(f => {
+        return conditionalDecomposition(f, options);
+    });
     let input = decompose(number, possible_options);
     //  Disable the display and render buttons until MathJax is done
     var display = document.getElementById('display');

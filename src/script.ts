@@ -45,7 +45,7 @@ const getFactors = (n: number) => {
 };
 
 // Checking if a number can be formed using factorial
-function isFactorial(n: number) {
+const isFactorial = (n: number) => {
     const factorials: { [key: number]: number } = {
         2: 2,
         6: 3,
@@ -59,7 +59,9 @@ function isFactorial(n: number) {
     } else {
         return false;
     }
-}
+};
+
+const isPow2 = (n: number) => n >= 2 && Number.isInteger(Math.log2(n));
 
 /* end helper functions */
 
@@ -72,6 +74,11 @@ const factorial = (n: number, gammaFunctionEnabled: boolean) => {
         // Using the pi product notation of factorial
         return `{\\prod_{k=1}^{${n}} k}`;
     }
+};
+
+// representation of 2^n
+const pow2Choose = (n: number) => {
+    return `{\\sum_{k=0}^{${n}} {n \\choose k}}`;
 };
 
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
@@ -307,6 +314,28 @@ const decomposeMulDivide = (n: number, op1: operation, op2: operation) => {
 };
 /* end decompose functions */
 
+const conditionalDecomposition = (
+    wrappedFunction: operation,
+    options: ConvertOptions
+): operation => {
+    return (n: number) => {
+        if (Math.random() <= 0.5) {
+            // inverse factorial of n, such that fac! = n
+            const fac = isFactorial(n);
+            if (fac) {
+                // factorial(fac) = fac! = n
+                return factorial(fac, options.gammaFunction);
+            }
+
+            if (isPow2(n)) {
+                return pow2Choose(Math.log2(n));
+            }
+        }
+
+        return wrappedFunction(n);
+    };
+};
+
 // Break a number down into smaller numbers separated by operators
 const decompose = (n: number, operations: operation[]) => {
     // Get three operations that can be used
@@ -397,6 +426,11 @@ const convert = (number: number, options: ConvertOptions) => {
     if (options.geometricSeries) {
         possible_options.push(infiniteGeometricSeries);
     }
+
+    // decorate each operation with a function that checks if the input is of a certain form, and if it is it overrides the decorated function's usual result with it's own.
+    possible_options = possible_options.map(f => {
+        return conditionalDecomposition(f, options);
+    });
 
     let input = decompose(number, possible_options);
 
