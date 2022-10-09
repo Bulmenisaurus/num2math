@@ -359,35 +359,36 @@ const decompose = (n: number, operations: operation[]) => {
         [randomOption1, randomOption2, randomOption3] = shuffle(operations).slice(0, 3);
     }
 
-    let randomValue = Math.random();
+    // Make each outcome equally likely (assuming all characteristics are fulfilled, which they are not)
+    const randomValue = Math.random();
+    const unitThreshold = 1 / 6;
 
-    // ab = (a - c)(b + c) + c (b - a + c), where c is any random positive number
-    if (n !== 0 && n < 100 && (n === 2 || !isPrime(n)) && randomValue < 0.25) {
+    // 1. ab = (a - c)(b + c) + c (b - a + c), where c is any random positive number
+    if (randomValue < unitThreshold && n !== 0 && n < 100 && (n === 2 || !isPrime(n))) {
         return decomposeABC(n, randomOption1, randomOption2, randomOption3, moreRandomOptions);
     }
 
-    // Represent (small) numbers using their square and square root
-    else if (randomValue < 0.55 && n < 10) {
+    // 2. Represent (small) numbers using their square and square root
+    if (randomValue < unitThreshold * 2 && n < 10) {
         return decomposeSqrt(n, randomOption1);
     }
 
-    // The sum of the first n odd numbers is equal to n^2 e.g 1 + 3 + 5 = 3^2
-    else if (n > 1 && isSquare(n) && randomValue < 0.6) {
+    // 3. The sum of the first n odd numbers is equal to n^2 e.g 1 + 3 + 5 = 3^2
+    if (randomValue < unitThreshold * 3 && n > 1 && isSquare(n)) {
         return decomposeSquare(n, randomOption1, randomOption2, randomOption3, moreRandomOptions);
     }
 
-    // The sum of two consecutive integers is the difference of their squares e.g 3 + 2 = 3^2 - 2^2
-    else if (isOdd(n) && randomValue < 0.7) {
+    // 4. The sum of two consecutive integers is the difference of their squares e.g 3 + 2 = 3^2 - 2^2
+    if (randomValue < unitThreshold * 4 && isOdd(n) && randomValue < 0.7) {
         return decomposeDifferenceSquares(n, randomOption1, randomOption2);
     }
 
-    // Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
-    else if (randomValue < 0.9 && n <= 200) {
+    // 5. Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
+    if (randomValue < unitThreshold * 5 && n <= 200) {
         return decomposeMulDivide(n, randomOption1, randomOption2);
-    } else {
-        // Multiply and divide by a random number. e.g 2 = (2*5)/5
-        return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
     }
+    // 6. Multiply and divide by a random number. e.g 2 = (2*5)/5
+    return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
 };
 
 type ConvertOptions = {
