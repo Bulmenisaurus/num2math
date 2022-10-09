@@ -1,5 +1,8 @@
 "use strict";
 /* helper functions */
+const randomElement = (array) => {
+    return array[Math.floor(Math.random() * array.length)];
+};
 const shuffle = (array) => {
     let currentIndex = array.length, randomIndex;
     // While there remain elements to shuffle.
@@ -49,8 +52,74 @@ const isFactorial = (n) => {
     }
 };
 const isPow2 = (n) => n >= 2 && Number.isInteger(Math.log2(n));
+const gcd = (a, b) => {
+    if (!b) {
+        return a;
+    }
+    return gcd(b, a % b);
+};
 /* end helper functions */
 /* start representations of numbers */
+const _eulerPhi = (n) => {
+    let x = 0;
+    for (let i = 1; i <= n; i++) {
+        if (gcd(i, n) === 1) {
+            x++;
+        }
+    }
+    return x;
+};
+const _primeSieve = (n) => {
+    const primeSieve = [];
+    for (let i = 0; i <= n; i++) {
+        primeSieve.push(true);
+    }
+    primeSieve[0] = false;
+    primeSieve[1] = false;
+    for (let p = 2; p * p <= n; p++) {
+        if (primeSieve[p] === true) {
+            for (let i = p * p; i <= n; i += p) {
+                primeSieve[i] = false;
+            }
+        }
+    }
+    let resPrimes = [];
+    for (let i = 0; i <= n; i++) {
+        if (primeSieve[i]) {
+            resPrimes.push(i);
+        }
+    }
+    return resPrimes;
+};
+const _cachedPrimes = _primeSieve(999);
+const _primeCountingFunction = (n) => {
+    return _cachedPrimes.filter(x => x <= n).length;
+};
+const numberTheoryFunctions = (n) => {
+    let matchingPhiInputs = [];
+    let matchingPiInputs = [];
+    let functionOptions = [];
+    for (let i = 1; i <= 999; i++) {
+        if (_eulerPhi(i) === n) {
+            matchingPhiInputs.push(i);
+        }
+        if (_primeCountingFunction(i) === n) {
+            matchingPiInputs.push(i);
+        }
+    }
+    if (matchingPhiInputs.length > 0) {
+        let matchingInput = randomElement(matchingPhiInputs);
+        functionOptions.push(`\\varphi(${matchingInput})`);
+    }
+    if (matchingPiInputs.length > 0) {
+        let matchingInput = randomElement(matchingPiInputs);
+        functionOptions.push(`\\pi(${matchingInput})`);
+    }
+    if (functionOptions.length === 0 || Math.random() < 0.3) {
+        functionOptions.push(`${n}`);
+    }
+    return randomElement(functionOptions);
+};
 const factorial = (n, gammaFunctionEnabled) => {
     if (Math.random() < 0.5 && gammaFunctionEnabled) {
         // Γ(n) = (n-1)!
@@ -62,11 +131,12 @@ const factorial = (n, gammaFunctionEnabled) => {
     }
 };
 // representation of 2^n
-const pow2Choose = (n) => {
-    return `{\\sum_{k=0}^{${n}} {n \\choose k}}`;
+const pow2Choose = (n, numberTheoryEnabled) => {
+    let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
+    return `{\\sum_{k=0}^{${x}} {${n} \\choose k}}`;
 };
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
-const limitNaturalLog = (n) => {
+const limitNaturalLog = (n, numberTheoryEnabled) => {
     if (n === 0) {
         return `{\\lim_{x \\to \\infty}{ \\frac{\\ln(x)}{x} }}`;
     }
@@ -74,11 +144,12 @@ const limitNaturalLog = (n) => {
         return `{\\lim_{x \\to 1}  {\\frac{\\ln(x)}{x - 1}}}`;
     }
     else {
-        return `{\\lim_{x \\to 0}{ \\frac{-\\ln(1 + ${n}(e^{-x} - 1))}{x} }}`;
+        let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
+        return `{\\lim_{x \\to 0}{ \\frac{-\\ln(1 + ${x}(e^{-x} - 1))}{x} }}`;
     }
 };
 // Limits of exponential functions: https://en.wikipedia.org/wiki/List_of_limits#Sums,_products_and_composites
-const limitExponential = (n) => {
+const limitExponential = (n, numberTheoryEnabled) => {
     if (n === 0) {
         return `{\\lim_{x \\to \\infty}{xe^{-x}}}`;
     }
@@ -86,6 +157,7 @@ const limitExponential = (n) => {
         return `{\\lim_{x \\to 0}{ \\frac{e^x - 1}{x} }}`;
     }
     else {
+        let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
         return `{\\lim_{x \\to 0}{ \\frac{e^{${n}x} - 1}{x} }}`;
     }
 };
@@ -141,7 +213,7 @@ const eulersIdentity = (n) => {
     }
 };
 // Infinite geometric series that evaluates to a finite value
-const infiniteGeometricSeries = (n) => {
+const infiniteGeometricSeries = (n, numberTheoryEnabled) => {
     // https://en.wikipedia.org/wiki/List_of_mathematical_series#Trigonometric_functions
     if (n === 0) {
         let r = Math.floor(Math.random() * 10) + 3;
@@ -155,7 +227,9 @@ const infiniteGeometricSeries = (n) => {
     else {
         // Using the infinite geometric series rule: When −1<x<1, summation from i = 0 to infinity of r^i = 1/(1-r) or (r-1)/r.
         // Decimal can be represented as fraction too. e.g (0.25)^i = (1/4)^i = 4^-i
-        return `{\\sum\\limits_{k=0}^\\infty {\\left({\\frac{${n - 1}}{${n}}}\\right)^{k}}}`;
+        let x1 = numberTheoryEnabled ? numberTheoryFunctions(n - 1) : n - 1;
+        let x2 = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
+        return `{\\sum\\limits_{k=0}^\\infty {\\left({\\frac{${x1}}{${x2}}}\\right)^{k}}}`;
     }
 };
 // Using the trig identity (cos^2)x + (sin^2)x = 1
@@ -264,7 +338,7 @@ const conditionalDecomposition = (wrappedFunction, options) => {
                 return factorial(fac, options.gammaFunction);
             }
             if (isPow2(n)) {
-                return pow2Choose(Math.log2(n));
+                return pow2Choose(Math.log2(n), options.numberTheory);
             }
         }
         return wrappedFunction(n);
@@ -328,15 +402,15 @@ const convert = (number, options) => {
         possible_options.push(eulersIdentity);
     }
     if (options.exponentialLimits) {
-        possible_options.push(limitNaturalLog);
-        possible_options.push(limitExponential);
+        possible_options.push(n => limitNaturalLog(n, options.numberTheory));
+        possible_options.push(n => limitExponential(n, options.numberTheory));
     }
     if (options.polynomialLimits) {
         possible_options.push(limDiffTwoSquares);
         possible_options.push(limitPolynomial);
     }
     if (options.geometricSeries) {
-        possible_options.push(infiniteGeometricSeries);
+        possible_options.push(n => infiniteGeometricSeries(n, options.numberTheory));
     }
     // decorate each operation with a function that checks if the input is of a certain form, and if it is it overrides the decorated function's usual result with it's own.
     possible_options = possible_options.map(f => {
@@ -387,7 +461,7 @@ const main = () => {
     const eulersIdentity = document.getElementById('eulers-identity');
     const exponentialLimits = document.getElementById('limits-exponential');
     const polynomialLimits = document.getElementById('limits-polynomial');
-    const trigonometry = document.getElementById('trig');
+    const numberTheory = document.getElementById('number-theory');
     const geometricSeries = document.getElementById('geometric-series');
     form.addEventListener('submit', event => {
         event.preventDefault();
@@ -396,7 +470,7 @@ const main = () => {
             eulersIdentity: eulersIdentity.checked,
             exponentialLimits: exponentialLimits.checked,
             polynomialLimits: polynomialLimits.checked,
-            trigonometry: trigonometry.checked,
+            numberTheory: numberTheory.checked,
             geometricSeries: geometricSeries.checked,
         });
     });
