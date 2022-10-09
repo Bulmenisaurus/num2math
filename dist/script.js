@@ -307,12 +307,12 @@ const decompose = (n, operations) => {
         return decomposeDifferenceSquares(n, randomOption1, randomOption2);
     }
     // Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
-    else if (randomValue < 0.9) {
-        // Multiply and divide by a random number. e.g 2 = (2*5)/5
-        return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
+    else if (randomValue < 0.9 && n <= 200) {
+        return decomposeMulDivide(n, randomOption1, randomOption2);
     }
     else {
-        return decomposeMulDivide(n, randomOption1, randomOption2);
+        // Multiply and divide by a random number. e.g 2 = (2*5)/5
+        return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
     }
 };
 const convert = (number, options) => {

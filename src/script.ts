@@ -382,11 +382,11 @@ const decompose = (n: number, operations: operation[]) => {
     }
 
     // Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
-    else if (randomValue < 0.9) {
+    else if (randomValue < 0.9 && n <= 200) {
+        return decomposeMulDivide(n, randomOption1, randomOption2);
+    } else {
         // Multiply and divide by a random number. e.g 2 = (2*5)/5
         return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
-    } else {
-        return decomposeMulDivide(n, randomOption1, randomOption2);
     }
 };
 
