@@ -1,5 +1,7 @@
 declare var MathJax: any;
 
+type operation = (n: number) => string;
+
 /* helper functions */
 
 const shuffle = <A>(array: A[]) => {
@@ -201,39 +203,117 @@ const sameNumber = (n: number) => `${n}`;
 
 /* end representations of numbers */
 
-// Another function to break numbers down into smaller numbers, expressed using exponent
-const decompose2 = (n: number, option1: (n: number) => string, option2: (n: number) => string) => {
-    // n -> (a)^b ± x
-    let base = Math.floor(Math.random() * 3) + 6;
+/* start decompose functions */
 
-    // is b in the equation above
-    let exponent = Math.log(n) / Math.log(base);
+// for n = ab and ∀c, either return n = ab or (a-c)(b+c) + c(b-a+c)
+const decomposeABC = (
+    number: number,
+    op1: operation,
+    op2: operation,
+    op3: operation,
+    moreRandomOptions: operation
+) => {
+    let factors = getFactors(number);
+    let randomIndex = Math.floor(Math.random() * factors.length);
+    let a = factors[randomIndex];
+    let b = number / a;
+    let c = Math.floor(Math.random() * 30) + 1;
 
-    // test a^floor(b) and a^ceil(b) to see which one is closer
-    let floorLog = Math.floor(exponent);
-    let ceilLog = Math.ceil(exponent);
+    // ab
+    if (Math.random() < 0.2) {
+        return `{{\\left({${op1(a)}}\\right)}{\\left({${op2(b)}}\\right)}}`;
+    }
 
-    let expFloor = base ** floorLog;
-    let expCeil = base ** ceilLog;
-
-    let diffFloor = Math.abs(n - expFloor);
-    let diffCeil = Math.abs(n - expCeil);
-
-    // a^floor(b) is a better approximation
-    // a^floor(b) is also lower than a^b, this we must add the difference
-    if (diffFloor < diffCeil) {
-        let power = floorLog === 1 ? '' : `^{${floorLog}}`;
-
-        return `{ \\left({${option1(base)}}\\right)${power} + {${option2(diffFloor)}}}`;
-    } else {
-        let power = ceilLog === 1 ? '' : `^{${ceilLog}}`;
-
-        return `{ \\left({${option1(base)}}\\right) ${power} - {${option2(diffCeil)}}}`;
+    // (a - c)(b + c) + c (b - a + c)
+    else {
+        return `{ \\left({${op1(a)} - ${op2(c)}}\\right) \\left({${op3(b)} + ${moreRandomOptions(
+            c
+        )}}\\right) + {${moreRandomOptions(c)}}{\\left({${moreRandomOptions(
+            b
+        )} - ${moreRandomOptions(a)} + ${moreRandomOptions(c)}} \\right)} }`;
     }
 };
 
+const decomposeOddNumber = (n: number, op1: operation, op2: operation, op3: operation) => {
+    let d = Math.floor(n / 2);
+    if (Math.random() < 0.5) {
+        return `{${op1(2)} \\left({${op2(d)}}\\right) + ${op3(1)}}`;
+    } else {
+        return `{\\left({${op1(d)} + ${op2(1)}}\\right)^2 - \\left({${op3(d)}}\\right)^2}`;
+    }
+};
+
+const decomposeSqrt = (n: number, op1: operation) => {
+    let square = n ** 2;
+    return `{\\sqrt{${op1(square)}}}`;
+};
+
+const decomposeSquare = (
+    n: number,
+    op1: operation,
+    op2: operation,
+    op3: operation,
+    moreRandomOptions: operation
+) => {
+    let squareRoot = Math.sqrt(n);
+    let sum = `${op1(1)}`;
+    let oddVal = 1;
+
+    if (Math.random() < 0.2) {
+        for (let i = 0; i < squareRoot - 1; i++) {
+            oddVal += 2;
+            sum += `+ ${moreRandomOptions(oddVal)}`;
+        }
+        sum = `{ ${sum} }`;
+        return sum;
+    }
+
+    // (a + b)^2 = a^2 + 2ab + b^2
+    else {
+        let a = Math.floor(Math.random() * squareRoot - 1) + 1;
+        let b = squareRoot - a;
+
+        // Representing (a + b)^2
+        if (Math.random() < 0.5) {
+            return `{ {\\left(${op1(a)} + ${op1(b)}\\right)}^2}`;
+        }
+
+        // Representing a^2 + 2ab + b^2
+        else {
+            return `{ {\\left(${op1(a)}\\right)}^2 + {${moreRandomOptions(2)}}{\\left(${op2(
+                a
+            )}\\right)}{\\left(${op3(b)}\\right)} + {\\left(${moreRandomOptions(b)}\\right)}^2}`;
+        }
+    }
+};
+
+const decomposeDifferenceSquares = (n: number, op1: operation, op2: operation) => {
+    let a = Math.floor(n / 2);
+    let b = Math.ceil(n / 2);
+
+    if (Math.ceil(n / 2) ** 2 < 100 && Math.random() < 0.7) {
+        return `{${op1(b ** 2)} - ${op2(a ** 2)}}`;
+    } else {
+        return `{ \\left({${op1(b)}}\\right)^2 -  \\left({${op2(a)}}\\right)^2}`;
+    }
+};
+
+// 7 = 2 * 3 + 1
+const decomposeAddMultiply = (n: number, op1: operation, op2: operation, op3: operation) => {
+    let randNum = Math.floor(Math.random() * n + 1) + 1;
+    let r = n % randNum;
+    let a = Math.floor(n / randNum);
+    return `${op1(a)} \\times {${op2(randNum)}} + ${op3(r)}`;
+};
+
+const decomposeMulDivide = (n: number, op1: operation, op2: operation) => {
+    let r = Math.floor(Math.random() * 5) + 1;
+    return `\\frac{${op1(n * r)}} {${op2(r)}}`;
+};
+/* end decompose functions */
+
 // Break a number down into smaller numbers separated by operators
-const decompose = (n: number, operations: ((n: number) => string)[]) => {
+const decompose = (n: number, operations: operation[]) => {
     // Get three operations that can be used
     let moreRandomOptions = (num: number) => {
         return operations[Math.floor(Math.random() * operations.length)](num);
@@ -259,131 +339,35 @@ const decompose = (n: number, operations: ((n: number) => string)[]) => {
 
     // ab = (a - c)(b + c) + c (b - a + c), where c is any random positive number
     if (n !== 0 && n < 100 && (n === 2 || !isPrime(n)) && randomValue < 0.25) {
-        let factors = getFactors(n);
-        let randomIndex = Math.floor(Math.random() * factors.length);
-        let a = factors[randomIndex];
-        let b = n / a;
-        let c = Math.floor(Math.random() * 30) + 1;
-
-        // ab
-        if (Math.random() < 0.2) {
-            return `{{\\left({${randomOption1(a)}}\\right)}{\\left({${randomOption2(b)}}\\right)}}`;
-        }
-
-        // (a - c)(b + c) + c (b - a + c)
-        else {
-            return `{ \\left({${randomOption1(a)} - ${randomOption2(
-                c
-            )}}\\right) \\left({${randomOption3(b)} + ${moreRandomOptions(
-                c
-            )}}\\right) + {${moreRandomOptions(c)}}{\\left({${moreRandomOptions(
-                b
-            )} - ${moreRandomOptions(a)} + ${moreRandomOptions(c)}} \\right)} }`;
-        }
+        return decomposeABC(n, randomOption1, randomOption2, randomOption3, moreRandomOptions);
     }
 
     // n = (d + 1)^2 - d^2 = 2d + 1 , where d = Math.floor(n/2)
     if (n > 2 && isOdd(n) && randomValue < 0.4) {
-        let d = Math.floor(n / 2);
-        if (Math.random() < 0.5) {
-            return `{${randomOption1(2)} \\left({${randomOption2(d)}}\\right) + ${randomOption3(
-                1
-            )}}`;
-        } else {
-            return `{\\left({${randomOption1(d)} + ${randomOption2(
-                1
-            )}}\\right)^2 - \\left({${randomOption3(d)}}\\right)^2}`;
-        }
+        return decomposeOddNumber(n, randomOption1, randomOption2, randomOption3);
     }
 
     // Represent (small) numbers using their square and square root
     else if (randomValue < 0.55 && n < 10) {
-        let square = n ** 2;
-        return `{\\sqrt{${randomOption1(square)}}}`;
+        return decomposeSqrt(n, randomOption1);
     }
 
     // The sum of the first n odd numbers is equal to n^2 e.g 1 + 3 + 5 = 3^2
     else if (n > 1 && isSquare(n) && randomValue < 0.6) {
-        let squareRoot = Math.sqrt(n);
-        let sum = `${randomOption1(1)}`;
-        let oddVal = 1;
-
-        if (Math.random() < 0.2) {
-            for (let i = 0; i < squareRoot - 1; i++) {
-                let randIndex = Math.floor(Math.random() * operations.length);
-                let randomOption = operations[randIndex];
-                oddVal += 2;
-                sum += `+ ${randomOption(oddVal)}`;
-            }
-            sum = `{ ${sum} }`;
-            return sum;
-        }
-
-        // (a + b)^2 = a^2 + 2ab + b^2
-        else {
-            let a = Math.floor(Math.random() * squareRoot - 1) + 1;
-            let b = squareRoot - a;
-
-            // Representing (a + b)^2
-            if (Math.random() < 0.5) {
-                return `{ {\\left(${randomOption1(a)} + ${randomOption2(b)}\\right)}^2}`;
-            }
-
-            // Representing a^2 + 2ab + b^2
-            else {
-                return `{ {\\left(${randomOption1(a)}\\right)}^2 + {${moreRandomOptions(
-                    2
-                )}}{\\left(${randomOption2(a)}\\right)}{\\left(${randomOption3(
-                    b
-                )}\\right)} + {\\left(${moreRandomOptions(b)}\\right)}^2}`;
-            }
-        }
+        return decomposeSquare(n, randomOption1, randomOption2, randomOption3, moreRandomOptions);
     }
 
     // The sum of two consecutive integers is the difference of their squares e.g 3 + 2 = 3^2 - 2^2
     else if (isOdd(n) && randomValue < 0.7) {
-        let a = Math.floor(n / 2);
-        let b = n - a;
-        if (n < 22) {
-            return `{${randomOption1(b ** 2)} - ${randomOption2(a ** 2)}}`;
-        } else {
-            return `{ \\left({${randomOption1(b)}}\\right)^2 -  \\left({${randomOption2(
-                a
-            )}}\\right)^2}`;
-        }
-    }
-
-    // Using Fibonacci's method to generate a pythagorean triple: https://en.wikipedia.org/wiki/Formulas_for_generating_Pythagorean_triples#Fibonacci's_method
-    else if (randomValue < 0.8 && isOdd(n) && n < 10) {
-        let a = n;
-        let a_square = a ** 2;
-        let position = (a_square + 1) / 2;
-        // Find sum of previous position - 1 terms
-        let b_square = 0;
-        let odd = -1;
-        for (let i = 1; i < position; i++) {
-            odd += 2;
-            b_square += odd;
-        }
-        let b = Math.sqrt(b_square);
-        let c_square = odd + 2 + b_square;
-        let c = Math.sqrt(c_square);
-        return `{\\sqrt{\\left({${randomOption1(c)}}\\right)^2 - \\left({${randomOption2(
-            b
-        )}}\\right)^2}}`;
+        return decomposeDifferenceSquares(n, randomOption1, randomOption2);
     }
 
     // Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
     else if (randomValue < 0.9) {
-        let randNum = Math.floor(Math.random() * n + 1) + 1;
-        let r = n % randNum;
-        let a = Math.floor(n / randNum);
-        return `${randomOption1(a)} \\times {${randomOption2(randNum)}} + ${randomOption3(r)}`;
-
         // Multiply and divide by a random number. e.g 2 = (2*5)/5
+        return decomposeAddMultiply(n, randomOption1, randomOption2, randomOption3);
     } else {
-        let r = Math.floor(Math.random() * 5) + 1;
-        return `\\frac{${randomOption1(n * r)}} {${randomOption2(r)}}`;
+        return decomposeMulDivide(n, randomOption1, randomOption2);
     }
 };
 
@@ -406,7 +390,7 @@ const convert = (number: number, options: ConvertOptions) => {
 
     // List of functions that generate LaTeX math expressions
     // Functions are chosen randomly
-    let possible_options: ((n: number) => string)[] = [];
+    let possible_options: operation[] = [];
 
     if (options.eulersIdentity) {
         possible_options.push(eulersIdentity);
