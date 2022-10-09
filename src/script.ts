@@ -190,7 +190,7 @@ const limitExponential = (n: number, numberTheoryEnabled: boolean) => {
         return `{\\lim_{x \\to 0}{ \\frac{e^x - 1}{x} }}`;
     } else {
         let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
-        return `{\\lim_{x \\to 0}{ \\frac{e^{${n}x} - 1}{x} }}`;
+        return `{\\lim_{x \\to 0}{ \\frac{e^{${x}x} - 1}{x} }}`;
     }
 };
 
