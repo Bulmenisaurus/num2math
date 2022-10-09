@@ -234,6 +234,7 @@ const decomposeABC = (
     }
 };
 
+// 13 = 6*2 + 1, or 17 = (8+1)^2 - (8)^2
 const decomposeOddNumber = (n: number, op1: operation, op2: operation, op3: operation) => {
     let d = Math.floor(n / 2);
     if (Math.random() < 0.5) {
@@ -243,11 +244,13 @@ const decomposeOddNumber = (n: number, op1: operation, op2: operation, op3: oper
     }
 };
 
+// 5 = sqrt(25)
 const decomposeSqrt = (n: number, op1: operation) => {
     let square = n ** 2;
     return `{\\sqrt{${op1(square)}}}`;
 };
 
+// 25 = 1 + 3 + 5 + 7 + 9
 const decomposeSquare = (
     n: number,
     op1: operation,
@@ -287,6 +290,7 @@ const decomposeSquare = (
     }
 };
 
+// 25 = 13^2 - 12^2
 const decomposeDifferenceSquares = (n: number, op1: operation, op2: operation) => {
     let a = Math.floor(n / 2);
     let b = Math.ceil(n / 2);
@@ -306,6 +310,7 @@ const decomposeAddMultiply = (n: number, op1: operation, op2: operation, op3: op
     return `${op1(a)} \\times {${op2(randNum)}} + ${op3(r)}`;
 };
 
+// 7 = 7*8/8
 const decomposeMulDivide = (n: number, op1: operation, op2: operation) => {
     let r = Math.floor(Math.random() * 5) + 1;
     return `\\frac{${op1(n * r)}} {${op2(r)}}`;
