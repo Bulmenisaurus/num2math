@@ -234,16 +234,6 @@ const decomposeABC = (
     }
 };
 
-// 13 = 6*2 + 1, or 17 = (8+1)^2 - (8)^2
-const decomposeOddNumber = (n: number, op1: operation, op2: operation, op3: operation) => {
-    let d = Math.floor(n / 2);
-    if (Math.random() < 0.5) {
-        return `{${op1(2)} \\left({${op2(d)}}\\right) + ${op3(1)}}`;
-    } else {
-        return `{\\left({${op1(d)} + ${op2(1)}}\\right)^2 - \\left({${op3(d)}}\\right)^2}`;
-    }
-};
-
 // 5 = sqrt(25)
 const decomposeSqrt = (n: number, op1: operation) => {
     let square = n ** 2;
@@ -345,11 +335,6 @@ const decompose = (n: number, operations: operation[]) => {
     // ab = (a - c)(b + c) + c (b - a + c), where c is any random positive number
     if (n !== 0 && n < 100 && (n === 2 || !isPrime(n)) && randomValue < 0.25) {
         return decomposeABC(n, randomOption1, randomOption2, randomOption3, moreRandomOptions);
-    }
-
-    // n = (d + 1)^2 - d^2 = 2d + 1 , where d = Math.floor(n/2)
-    if (n > 2 && isOdd(n) && randomValue < 0.4) {
-        return decomposeOddNumber(n, randomOption1, randomOption2, randomOption3);
     }
 
     // Represent (small) numbers using their square and square root
