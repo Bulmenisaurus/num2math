@@ -2,46 +2,45 @@
 let downloadBtn = document.getElementById('download-img');
 downloadBtn.addEventListener('click', downloadPNG);
 // Initiate download of blob
-function download(filename, blob) {
-    //@ts-ignore
-    if (window.navigator.msSaveOrOpenBlob) {
-        //@ts-ignore
-        window.navigator.msSaveBlob(blob, filename);
-    }
-    else {
-        // Create and link and click on it to automatically download image
-        const elem = window.document.createElement('a');
-        elem.href = window.URL.createObjectURL(blob);
-        elem.download = filename;
-        elem.click();
-    }
-}
+const download = (filename, blob) => {
+    const elem = window.document.createElement('a');
+    elem.href = window.URL.createObjectURL(blob);
+    elem.download = filename;
+    elem.click();
+};
 function downloadPNG() {
     // Get the svg from the page
     var svg = document.querySelector('svg');
     // Get the current number
     var number = document.getElementById('input').value;
-    // Increase the SVG's width and height to produce a bigger image
-    let w = parseInt(svg.getAttribute('width')) * 3;
-    let h = parseInt(svg.getAttribute('height')) * 3;
-    ``;
-    // Clone the svg before changing width and height so that it does not affect the svg on the page
-    svg = svg.cloneNode(true);
-    svg.setAttribute('width', `${w}ex`);
-    svg.setAttribute('height', `${h}ex`);
+    // // Increase the SVG's width and height to produce a bigger image
+    let w = parseInt(svg.getAttribute('width'));
+    let h = parseInt(svg.getAttribute('height'));
+    // ``;
+    // // Clone the svg before changing width and height so that it does not affect the svg on the page
+    // svg = <SVGSVGElement>svg.cloneNode(true);
+    // svg.setAttribute('width', `${w}ex`);
+    // svg.setAttribute('height', `${h}ex`);
     // Convert SVG to string data
-    var data = new XMLSerializer().serializeToString(svg);
-    var canvas = document.createElement('canvas');
-    canvg(canvas, data, {
-        renderCallback: function () {
-            // Convert SVG data to PNG image
-            canvas.toBlob(function (blob) {
-                if (blob === null) {
-                    throw new Error('Failed to serialize canvas to blob');
-                }
-                download(`complicated-equation-that-equals-${number}.png`, blob);
-            });
-        },
-    });
+    const data = new XMLSerializer().serializeToString(svg);
+    const svgDataUrl = `data:image/svg+xml;base64,${btoa(data)}`;
+    const canvas = document.createElement('canvas');
+    // upscale height to at least 800px
+    let scaleFactor = Math.max(2, 800 / h);
+    canvas.width = w * scaleFactor;
+    canvas.height = h * scaleFactor;
+    console.log({ w: canvas.width, h: canvas.height });
+    const ctx = canvas.getContext('2d');
+    const svgDataImage = new Image();
+    svgDataImage.onload = () => {
+        ctx.drawImage(svgDataImage, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+            if (blob === null) {
+                throw new Error('Failed to serialize canvas to blob');
+            }
+            download(`complicated-expression-that-equals-${number}`, blob);
+        });
+    };
+    svgDataImage.src = svgDataUrl;
 }
 //# sourceMappingURL=download-png.js.map
