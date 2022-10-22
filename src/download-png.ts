@@ -1,7 +1,5 @@
 let downloadBtn = <HTMLButtonElement>document.getElementById('download-img');
 
-downloadBtn.addEventListener('click', downloadPNG);
-
 // Initiate download of blob
 const download = (filename: string, blob: Blob) => {
     const elem = window.document.createElement('a');
@@ -10,7 +8,7 @@ const download = (filename: string, blob: Blob) => {
     elem.click();
 };
 
-function downloadPNG() {
+const downloadPNG = () => {
     // Get the svg from the page
     var svg = document.querySelector('svg')!;
 
@@ -53,4 +51,9 @@ function downloadPNG() {
     };
 
     svgDataImage.src = svgDataUrl;
-}
+};
+
+const main = () => {
+    downloadBtn.addEventListener('click', downloadPNG);
+};
+export { main };
