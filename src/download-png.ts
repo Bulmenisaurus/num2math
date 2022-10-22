@@ -1,3 +1,9 @@
+/**
+ * Converts the MathJax SVG (TODO: this code produces the error if the MathJax is html) to a png,
+ * by serializing the svg into a data url and drawing to the canvas, where it can than be serialized
+ * into a png.
+ */
+
 let downloadBtn = <HTMLButtonElement>document.getElementById('download-img');
 
 // Initiate download of blob
@@ -15,14 +21,9 @@ const downloadPNG = () => {
     // Get the current number
     var number = (<HTMLInputElement>document.getElementById('input')).value;
 
-    // // Increase the SVG's width and height to produce a bigger image
+    // Increase the SVG's width and height to produce a bigger image
     let w = parseInt(svg.getAttribute('width')!);
     let h = parseInt(svg.getAttribute('height')!);
-    // ``;
-    // // Clone the svg before changing width and height so that it does not affect the svg on the page
-    // svg = <SVGSVGElement>svg.cloneNode(true);
-    // svg.setAttribute('width', `${w}ex`);
-    // svg.setAttribute('height', `${h}ex`);
 
     // Convert SVG to string data
     const data = new XMLSerializer().serializeToString(svg);

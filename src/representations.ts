@@ -1,3 +1,9 @@
+/**
+ * Exploits the [Strong law of small numbers](https://en.wikipedia.org/wiki/Strong_law_of_small_numbers) to
+ * find properties of the smaller numbers given by the decompositions, such as the euler phi and prime counting functions,
+ * factorial/gamma, and more.
+ */
+
 import { gcd, randomElement } from './utils';
 
 const _eulerPhi = (n: number) => {

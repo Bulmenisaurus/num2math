@@ -1,3 +1,9 @@
+/**
+ * This file contains decomposition functions. They break larger numbers (3-digit) into smaller ones (2-1 digits),
+ * where the [Strong law of small numbers](https://en.wikipedia.org/wiki/Strong_law_of_small_numbers) can take of them
+ * as they have much more properties than larger numbers.
+ */
+
 import {
     operation,
     getFactors,
