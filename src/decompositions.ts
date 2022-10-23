@@ -136,6 +136,22 @@ const decomposeLcm = (n: number, ops: operation[]) => {
     return `\\operatorname{lcm}\\left(${ops[0](group1Value)}, ${ops[1](group2Value)}\\right)`;
 };
 
+const decomposeSumConsecutive = (n: number, ops: operation[]) => {
+    const oddFactors = getFactors(n).filter(f => f % 2 == 1 && f !== 1);
+
+    const chosenFactor = oddFactors[Math.floor(Math.random() * oddFactors.length)];
+    const middle = n / chosenFactor;
+
+    const sideLength = (chosenFactor - 1) / 2;
+
+    const minValue = middle - sideLength;
+    const minValueSign = minValue < 0 ? '-' : '+';
+
+    return `\\sum_{k=0}^{${ops[0](chosenFactor - 1)}} \\left(k ${minValueSign} ${ops[1](
+        Math.abs(minValue)
+    )}\\right)`;
+};
+
 /* end decompose functions */
 
 const conditionalDecomposition = (
@@ -200,6 +216,10 @@ const decompose = (n: number, available_operations: operation[]) => {
 
     if (!isPrime(n) && n > 1) {
         decompositions.push(decomposeLcm);
+    }
+
+    if (!isPow2(n) && n > 1) {
+        decompositions.push(decomposeSumConsecutive);
     }
 
     // 6. Multiply and divide by a random number. e.g 2 = (2*5)/5
