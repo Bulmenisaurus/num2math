@@ -7,7 +7,7 @@ import * as download_png from './download-png';
 
 const convert = (number: number, options: ConvertOptions) => {
     // Validating input
-    if (isNaN(number) || number > 1000 || number < 0) {
+    if (isNaN(number) || number < 0) {
         return;
     }
 
