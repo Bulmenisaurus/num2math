@@ -7,6 +7,7 @@
 import {
     operation,
     getFactors,
+    getPrimeFactors,
     ConvertOptions,
     isFactorial,
     isPow2,
@@ -108,6 +109,33 @@ const decomposeMulDivide = (n: number, ops: operation[]) => {
     let r = Math.floor(Math.random() * 5) + 1;
     return `\\frac{${ops[0](n * r)}} {${ops[1](r)}}`;
 };
+
+const decomposeLcm = (n: number, ops: operation[]) => {
+    // all factors, e.g. [2, 2, 2, 3, 3, ...]
+    const factors = getPrimeFactors(n);
+
+    // factors with corresponding exponents, e.g. {2: 3, 3: 2, 7: 1, ...}
+    let factorExp: Map<number, number> = new Map();
+    for (const f of factors) {
+        factorExp.set(f, factorExp.has(f) ? factorExp.get(f)! + 1 : 1);
+    }
+
+    // distinct prime factors, e.g. [7, 3, 5, 2]
+    const primeFactors = shuffle(Array.from(factorExp.keys()));
+
+    // in range [1, length-1]
+    let sliceIdx = Math.floor(Math.random() * (primeFactors.length - 1)) + 1;
+
+    // split into complements
+    let group1 = primeFactors.slice(0, sliceIdx);
+    let group2 = primeFactors.slice(sliceIdx);
+
+    let group1Value = group1.map(m => m ** factorExp.get(m)!).reduce((a, b) => a * b, 1);
+    let group2Value = group2.map(m => m ** factorExp.get(m)!).reduce((a, b) => a * b, 1);
+
+    return `\\operatorname{lcm}\\left(${ops[0](group1Value)}, ${ops[1](group2Value)}\\right)`;
+};
+
 /* end decompose functions */
 
 const conditionalDecomposition = (
@@ -168,6 +196,10 @@ const decompose = (n: number, available_operations: operation[]) => {
     // 5. Express a number using multiplication and addition. E.g 4 = 1 * 3 + 1
     if (n <= 200) {
         decompositions.push(decomposeMulDivide);
+    }
+
+    if (!isPrime(n) && n > 1) {
+        decompositions.push(decomposeLcm);
     }
 
     // 6. Multiply and divide by a random number. e.g 2 = (2*5)/5

@@ -53,6 +53,22 @@ const getFactors = (n: number) => {
     return factors;
 };
 
+// https://stackoverflow.com/a/53643340/13996389
+const getPrimeFactors = (n: number) => {
+    const factors = [];
+    let divisor = 2;
+
+    while (n >= 2) {
+        if (n % divisor == 0) {
+            factors.push(divisor);
+            n /= divisor;
+        } else {
+            divisor++;
+        }
+    }
+    return factors;
+};
+
 // Checking if a number can be formed using factorial
 const isFactorial = (n: number) => {
     const factorials: { [key: number]: number } = {
@@ -93,6 +109,7 @@ export {
     isSquare,
     isPrime,
     getFactors,
+    getPrimeFactors,
     isFactorial,
     isPow2,
     gcd,
