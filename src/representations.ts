@@ -106,9 +106,9 @@ const factorial = (n: number, gammaFunctionEnabled: boolean) => {
 const pow2Choose = (n: number, numberTheoryEnabled: boolean) => {
     let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
     return `{${href(
-        '\\sum',
+        `\\sum_{k=0}^{${x}}`,
         'https://en.wikipedia.org/wiki/List_of_mathematical_series#Binomial_coefficients_2'
-    )}_{k=0}^{${x}} {${n} \\choose k}}`;
+    )} {${n} \\choose k}}`;
 };
 
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
