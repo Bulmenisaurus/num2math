@@ -133,27 +133,15 @@ const conditionalDecomposition = (
 };
 
 // Break a number down into smaller numbers separated by operators
-const decompose = (n: number, operations: operation[]) => {
-    // Get three operation[] that can be used
-    let moreRandomOptions = (num: number) => {
-        return operations[Math.floor(Math.random() * operations.length)](num);
-    };
+const decompose = (n: number, available_operations: operation[]) => {
+    let operations = available_operations;
 
-    let randomOption1 = moreRandomOptions;
-    let randomOption2 = moreRandomOptions;
-    let randomOption3 = moreRandomOptions;
-
-    // if there are no operation[] to be done
-    if (operations.length === 0) {
-        randomOption1 = representations.sameNumber;
-        randomOption2 = representations.sameNumber;
-        randomOption3 = representations.sameNumber;
-        moreRandomOptions = representations.sameNumber;
+    // pad operations to at least 4 elements
+    while (operations.length < 4) {
+        operations.push(representations.sameNumber);
     }
 
-    if (operations.length >= 3) {
-        [randomOption1, randomOption2, randomOption3] = shuffle(operations).slice(0, 3);
-    }
+    operations = shuffle(operations).slice(0, 4);
 
     const decompositions: decomposition[] = [];
 
