@@ -168,8 +168,8 @@ const decompose = (n: number, operations: operation[]) => {
     }
 
     // 3. The sum of the first n odd numbers is equal to n^2 e.g 1 + 3 + 5 = 3^2
-    if (n > 1 && isSquare(n)) {
-        decompositions.push(decomposeSqrt);
+    if (n > 1 && isSquare(n) && n < 100) {
+        decompositions.push(decomposeSquare);
     }
 
     // 4. The sum of two consecutive integers is the difference of their squares e.g 3 + 2 = 3^2 - 2^2

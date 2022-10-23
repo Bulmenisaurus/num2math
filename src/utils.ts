@@ -80,6 +80,10 @@ const gcd = (a: number, b: number): number => {
     return gcd(b, a % b);
 };
 
+const href = (s: string, url: string) => {
+    return `\\href{${url}}{\\color{black}{${s}}}`;
+};
+
 export {
     operation,
     ConvertOptions,
@@ -92,4 +96,5 @@ export {
     isFactorial,
     isPow2,
     gcd,
+    href,
 };

@@ -4,7 +4,7 @@
  * factorial/gamma, and more.
  */
 
-import { gcd, randomElement } from './utils';
+import { gcd, randomElement, href } from './utils';
 
 const _eulerPhi = (n: number) => {
     let x = 0;
@@ -66,12 +66,23 @@ const numberTheoryFunctions = (n: number) => {
 
     if (matchingPhiInputs.length > 0) {
         let matchingInput = randomElement(matchingPhiInputs);
-        functionOptions.push(`\\varphi(${matchingInput})`);
+
+        functionOptions.push(
+            `${href(
+                '\\varphi',
+                'https://en.wikipedia.org/wiki/Euler%27s_totient_function'
+            )}(${matchingInput})`
+        );
     }
 
     if (matchingPiInputs.length > 0) {
         let matchingInput = randomElement(matchingPiInputs);
-        functionOptions.push(`\\pi(${matchingInput})`);
+        functionOptions.push(
+            `${href(
+                '\\pi',
+                'https://en.wikipedia.org/wiki/Prime-counting_function'
+            )}(${matchingInput})`
+        );
     }
 
     if (functionOptions.length === 0 || Math.random() < 0.3) {
@@ -84,7 +95,7 @@ const numberTheoryFunctions = (n: number) => {
 const factorial = (n: number, gammaFunctionEnabled: boolean) => {
     if (Math.random() < 0.5 && gammaFunctionEnabled) {
         // Γ(n) = (n-1)!
-        return `{\\Gamma (${n + 1})}`;
+        return `{${href('\\Gamma', 'https://en.wikipedia.org/wiki/Gamma_function')} (${n + 1})}`;
     } else {
         // Using the pi product notation of factorial
         return `{\\prod_{k=1}^{${n}} k}`;
@@ -94,44 +105,49 @@ const factorial = (n: number, gammaFunctionEnabled: boolean) => {
 // representation of 2^n
 const pow2Choose = (n: number, numberTheoryEnabled: boolean) => {
     let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
-    return `{\\sum_{k=0}^{${x}} {${n} \\choose k}}`;
+    return `{${href(
+        '\\sum',
+        'https://en.wikipedia.org/wiki/List_of_mathematical_series#Binomial_coefficients_2'
+    )}_{k=0}^{${x}} {${n} \\choose k}}`;
 };
 
 // Limits of natural log functions: https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms
 const limitNaturalLog = (n: number, numberTheoryEnabled: boolean) => {
+    const url = 'https://en.wikipedia.org/wiki/List_of_limits#Natural_logarithms';
+
     if (n === 0) {
-        return `{\\lim_{x \\to \\infty}{ \\frac{\\ln(x)}{x} }}`;
+        return `{${href('\\lim_{x \\to \\infty}', url)}{ \\frac{\\ln(x)}{x} }}`;
     } else if (n === 1) {
-        return `{\\lim_{x \\to 1}  {\\frac{\\ln(x)}{x - 1}}}`;
+        return `{${href('\\lim_{x \\to 1}', url)}  {\\frac{\\ln(x)}{x - 1}}}`;
     } else {
         let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
-        return `{\\lim_{x \\to 0}{ \\frac{-\\ln(1 + ${x}(e^{-x} - 1))}{x} }}`;
+        return `{${href('\\lim_{x \\to 0}', url)}{ \\frac{-\\ln(1 + ${x}(e^{-x} - 1))}{x} }}`;
     }
 };
 
 // Limits of exponential functions: https://en.wikipedia.org/wiki/List_of_limits#Sums,_products_and_composites
 const limitExponential = (n: number, numberTheoryEnabled: boolean) => {
+    const url = 'https://en.wikipedia.org/wiki/List_of_limits#Sums,_products_and_composites';
+
     if (n === 0) {
-        return `{\\lim_{x \\to \\infty}{xe^{-x}}}`;
+        return `{${href('\\lim_{x \\to \\infty}', url)}{xe^{-x}}}`;
     } else if (n === 1) {
-        return `{\\lim_{x \\to 0}{ \\frac{e^x - 1}{x} }}`;
+        return `{${href('\\lim_{x \\to 0}', url)}{ \\frac{e^x - 1}{x} }}`;
     } else {
         let x = numberTheoryEnabled ? numberTheoryFunctions(n) : n;
-        return `{\\lim_{x \\to 0}{ \\frac{e^{${x}x} - 1}{x} }}`;
+        return `{${href('\\lim_{x \\to 0}', url)}{ \\frac{e^{${x}x} - 1}{x} }}`;
     }
 };
 
 // Limits of polynomial functions
 const limitPolynomial = (n: number) => {
-    // https://en.wikipedia.org/wiki/List_of_limits#Functions_of_the_form_xa
+    const url = 'https://en.wikipedia.org/wiki/List_of_limits#Functions_of_the_form_xa';
     if (n === 0) {
         let r = Math.floor(Math.random() * 20);
-        return `{\\lim_{x \\to \\infty}{${r}x^{-1}}}`;
-    }
-
-    // https://en.wikipedia.org/wiki/List_of_limits#Functions_of_the_form_xg(x)
-    else if (n === 1) {
-        return `{\\lim_{x \\to \\infty}{x^{1/x}}}`;
+        return `{${href('\\lim_{x \\to \\infty}', url)}{${r}x^{-1}}}`;
+    } else if (n === 1) {
+        const url2 = 'https://en.wikipedia.org/wiki/List_of_limits#Functions_of_the_form_xg(x)';
+        return `{${href('\\lim_{x \\to \\infty}', url2)}{x^{1/x}}}`;
     } else {
         // generate random polynomial limits like lim x -> ∞ (28x^2 - 11x)/(4x^2 + 10x)
         // since the highest power terms dominate in the limits, the rest are ignored and can be random
@@ -177,25 +193,31 @@ const limitPolynomial = (n: number) => {
 const eulersIdentity = (n: number) => {
     // e.g −6e^(pi*i)=6
 
+    const url = 'https://en.wikipedia.org/wiki/Euler%27s_identity';
+
     if (n !== 0) {
-        return `{-${n}e^{\\pi i}}`;
+        return `{-${n}${href('e^{\\pi i}', url)}}`;
     } else {
-        return `{(e^{\\pi i} + 1)}`;
+        return `{(${href('e^{\\pi i}', url)} + 1)}`;
     }
 };
 
 // Infinite geometric series that evaluates to a finite value
 const infiniteGeometricSeries = (n: number, numberTheoryEnabled: boolean) => {
-    // https://en.wikipedia.org/wiki/List_of_mathematical_series#Trigonometric_functions
     if (n === 0) {
+        let url =
+            'https://en.wikipedia.org/wiki/List_of_mathematical_series#Trigonometric_functions';
         let r = Math.floor(Math.random() * 10) + 3;
-        return `{\\sum\\limits_{k=0}^{${r -
+        return `{${href('\\sum', url)}\\limits_{k=0}^{${r -
             1}} {\\sin \\left({ \\frac{2 \\pi k}{${r}} } \\right)}}`;
     }
 
-    // Using the Riemann zeta function: https://en.wikipedia.org/wiki/Particular_values_of_the_Riemann_zeta_function#The_Riemann_zeta_function_at_0_and_1
+    // Using the Riemann zeta function
     else if (n === 1) {
-        return `{\\lim_{\\epsilon \\to 0}{ \\epsilon \\zeta(1 + \\epsilon) }}`;
+        let url =
+            'https://en.wikipedia.org/wiki/Particular_values_of_the_Riemann_zeta_function#The_Riemann_zeta_function_at_0_and_1';
+
+        return `{${href('\\lim_{\\epsilon \\to 0}', url)}{ \\epsilon \\zeta(1 + \\epsilon) }}`;
     } else {
         // Using the infinite geometric series rule: When −1<x<1, summation from i = 0 to infinity of r^i = 1/(1-r) or (r-1)/r.
         // Decimal can be represented as fraction too. e.g (0.25)^i = (1/4)^i = 4^-i
