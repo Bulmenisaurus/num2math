@@ -163,7 +163,7 @@ const decomposeContinuedFraction = (n: number, ops: operation[]) => {
 
     const [leading, seq] = continuedFraction(n, 10 ** exp10);
 
-    return `{10^{${exp10}}\\left[${r(leading)};${seq.map(m => r(m)).join(',')}\\right]}`;
+    return `{10^{${exp10}} \\times \\left[${r(leading)};${seq.map(m => r(m)).join(',')}\\right]}`;
 };
 
 /* end decompose functions */
