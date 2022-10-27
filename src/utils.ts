@@ -7,6 +7,7 @@ type ConvertOptions = {
     polynomialLimits: boolean;
     numberTheory: boolean;
     geometricSeries: boolean;
+    continuedFractions: boolean;
 };
 
 const randomElement = <A>(array: A[]) => {
@@ -100,6 +101,24 @@ const href = (s: string, url: string) => {
     return `\\href{${url}}{\\color{black}{${s}}}`;
 };
 
+const continuedFraction = (numerator: number, denominator: number): [number, number[]] => {
+    let continuedFractionWholePart: number | undefined;
+    let continuedFractionPart: number[] = [];
+    while (numerator !== 0 && denominator !== 0) {
+        let wholePart = Math.floor(numerator / denominator);
+
+        if (continuedFractionWholePart === undefined) {
+            continuedFractionWholePart = wholePart;
+        } else {
+            continuedFractionPart.push(wholePart);
+        }
+
+        [numerator, denominator] = [denominator, numerator - denominator * wholePart];
+    }
+
+    return [continuedFractionWholePart!, continuedFractionPart];
+};
+
 export {
     operation,
     ConvertOptions,
@@ -114,4 +133,5 @@ export {
     isPow2,
     gcd,
     href,
+    continuedFraction,
 };

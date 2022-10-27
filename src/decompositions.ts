@@ -15,6 +15,7 @@ import {
     isPrime,
     isSquare,
     isOdd,
+    continuedFraction,
 } from './utils';
 
 type decomposition = (n: number, ops: operation[]) => string;
@@ -152,6 +153,19 @@ const decomposeSumConsecutive = (n: number, ops: operation[]) => {
     )}\\right)`;
 };
 
+const decomposeContinuedFraction = (n: number, ops: operation[]) => {
+    // log_10(n) + x, where x is in [0, 1, 2]
+    const r = (n: number) => {
+        return ops[Math.floor(Math.random() * ops.length)](n);
+    };
+
+    const exp10 = Math.floor(Math.log10(n)) + Math.floor(Math.random() * 3);
+
+    const [leading, seq] = continuedFraction(n, 10 ** exp10);
+
+    return `{10^{${exp10}}\\left[${r(leading)};${seq.map(m => r(m)).join(',')}\\right]}`;
+};
+
 /* end decompose functions */
 
 const conditionalDecomposition = (
@@ -177,7 +191,7 @@ const conditionalDecomposition = (
 };
 
 // Break a number down into smaller numbers separated by operators
-const decompose = (n: number, available_operations: operation[]) => {
+const decompose = (n: number, available_operations: operation[], options: ConvertOptions) => {
     let operations = available_operations;
 
     // pad operations to at least 4 elements
@@ -220,6 +234,10 @@ const decompose = (n: number, available_operations: operation[]) => {
 
     if (!isPow2(n) && n > 1) {
         decompositions.push(decomposeSumConsecutive);
+    }
+
+    if (n > 1 && options.continuedFractions) {
+        decompositions.push(decomposeContinuedFraction);
     }
 
     // 6. Multiply and divide by a random number. e.g 2 = (2*5)/5

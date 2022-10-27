@@ -40,7 +40,7 @@ const convert = (number: number, options: ConvertOptions) => {
         return conditionalDecomposition(f, options);
     });
 
-    let input = decompose(number, possible_options);
+    let input = decompose(number, possible_options, options);
 
     //  Disable the display and render buttons until MathJax is done
     var display = <HTMLInputElement>document.getElementById('display');
@@ -92,6 +92,7 @@ const main = () => {
     const polynomialLimits = document.getElementById('limits-polynomial') as HTMLInputElement;
     const numberTheory = document.getElementById('number-theory') as HTMLInputElement;
     const geometricSeries = document.getElementById('geometric-series') as HTMLInputElement;
+    const continuedFractions = document.getElementById('continued-fractions') as HTMLInputElement;
 
     form.addEventListener('submit', event => {
         event.preventDefault();
@@ -103,6 +104,7 @@ const main = () => {
             polynomialLimits: polynomialLimits.checked,
             numberTheory: numberTheory.checked,
             geometricSeries: geometricSeries.checked,
+            continuedFractions: continuedFractions.checked,
         });
     });
 
